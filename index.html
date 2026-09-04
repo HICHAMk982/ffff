@@ -3,280 +3,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Évaluation Interactive | Informatique & Windows 10</title>
+    <title>E-Learning Infographique | Informatique & Windows 10</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); 
-            min-height: 100vh; 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
         }
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.95); 
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
-            border-radius: 1rem; 
+        
+        /* Infographic Card Styling */
+        .info-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .option-btn { 
-            transition: all 0.2s ease; 
-            border: 2px solid #e5e7eb; 
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
         }
-        .option-btn:hover:not(:disabled) { 
-            border-color: #3b82f6; 
-            background-color: #eff6ff; 
-            transform: translateX(5px); 
+
+        /* Gradient Text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .option-btn:disabled { 
-            cursor: not-allowed; 
-            opacity: 0.8; 
+
+        /* JS Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
         }
-        .correct-ans { 
-            background-color: #ecfdf5 !important; 
-            border-color: #10b981 !important; 
-            color: #065f46 !important; 
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .wrong-ans { 
-            background-color: #fef2f2 !important; 
-            border-color: #ef4444 !important; 
-            color: #991b1b !important; 
+        
+        /* Staggered delays for child elements */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* Quiz Buttons */
+        .quiz-btn {
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
         }
-        .fade-in { 
-            animation: fadeIn 0.4s ease-in; 
+        .quiz-btn:hover:not(:disabled) {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            transform: scale(1.02);
         }
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        .correct-ans { background-color: #ecfdf5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .wrong-ans { background-color: #fef2f2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="py-10 px-4">
-    <div class="max-w-3xl mx-auto">
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800"><i class="fas fa-laptop-code text-blue-600 mr-2"></i>Révision Pro</h1>
-                <p class="text-sm text-gray-500 mt-1">Initiation à l'Informatique & Windows 10</p>
+<body class="pb-20">
+
+    <!-- Navbar / Header -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-graduation-cap text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Info<span class="text-blue-600">Pro</span></h1>
             </div>
-            <div class="bg-blue-50 px-5 py-3 rounded-lg border border-blue-100 flex items-center shadow-sm">
-                <i class="fas fa-star text-yellow-400 text-xl mr-3"></i>
-                <div class="flex flex-col">
-                    <span class="text-xs text-blue-500 font-semibold uppercase tracking-wider">Score</span>
-                    <span class="text-xl font-bold text-blue-800 leading-none"><span id="score">0</span> pts</span>
+            
+            <!-- Navigation Tabs -->
+            <div class="flex space-x-2 bg-gray-100 p-1 rounded-xl">
+                <button onclick="switchTab('module1')" id="btn-module1" class="tab-btn active-tab px-5 py-2 rounded-lg font-semibold text-sm transition-all bg-white text-blue-600 shadow-sm">
+                    <i class="fas fa-microchip mr-2"></i>Module 1
+                </button>
+                <button onclick="switchTab('module2')" id="btn-module2" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm text-gray-500 hover:text-gray-700 transition-all">
+                    <i class="fab fa-windows mr-2"></i>Module 2
+                </button>
+                <button onclick="switchTab('quiz')" id="btn-quiz" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm text-gray-500 hover:text-gray-700 transition-all">
+                    <i class="fas fa-gamepad mr-2"></i>Quiz
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 mt-12">
+
+        <!-- ================= MODULE 1 : INITIATION ================= -->
+        <section id="module1" class="tab-content block">
+            <!-- Hero Section -->
+            <div class="text-center mb-16 reveal active">
+                <span class="text-blue-600 font-bold tracking-wider uppercase text-sm bg-blue-100 px-4 py-1 rounded-full">Initiation</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-4 mb-4 text-gray-800">L'Architecture de <span class="bg-gradient-to-r from-blue-600 to-cyan-500 text-gradient">l'Ordinateur</span></h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Comprendre de quoi est faite la machine et comment elle traite l'information.</p>
+            </div>
+
+            <!-- Infographic 1: Le Système -->
+            <div class="info-card p-8 mb-10 reveal">
+                <div class="flex items-center gap-4 mb-6 border-b pb-4">
+                    <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl"><i class="fas fa-laptop-code"></i></div>
+                    <h3 class="text-2xl font-bold text-gray-800">Le Système Informatique</h3>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl border border-gray-200">
+                        <div class="text-4xl mb-4 text-gray-700"><i class="fas fa-server"></i></div>
+                        <h4 class="text-xl font-bold mb-2">Matériel (Hardware)</h4>
+                        <p class="text-gray-600 text-sm">La partie physique et palpable de l'ordinateur (Écran, unité centrale, clavier).</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
+                        <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-code"></i></div>
+                        <h4 class="text-xl font-bold mb-2">Logiciel (Software)</h4>
+                        <p class="text-gray-600 text-sm">La partie immatérielle. Les programmes et applications qui font fonctionner le matériel.</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Progress Bar -->
-        <div class="mb-6">
-            <div class="flex justify-between text-xs font-semibold text-gray-500 mb-2">
-                <span id="progress-text">Question 1 sur 15</span>
-                <span id="progress-percentage">0%</span>
+            <!-- Infographic 2: Composants Internes -->
+            <div class="info-card p-8 mb-10 reveal">
+                <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">Les Composants Internes de l'UC</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <!-- CPU -->
+                    <div class="text-center p-4 rounded-xl hover:bg-orange-50 transition-colors">
+                        <div class="w-20 h-20 mx-auto bg-orange-100 rounded-full flex items-center justify-center text-orange-500 text-3xl mb-4"><i class="fas fa-microchip"></i></div>
+                        <h4 class="font-bold text-gray-800">Processeur (CPU)</h4>
+                        <p class="text-xs text-gray-500 mt-2">Le cerveau de la machine. Exécute les instructions (Hz).</p>
+                    </div>
+                    <!-- RAM -->
+                    <div class="text-center p-4 rounded-xl hover:bg-green-50 transition-colors">
+                        <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center text-green-500 text-3xl mb-4"><i class="fas fa-memory"></i></div>
+                        <h4 class="font-bold text-gray-800">Mémoire (RAM)</h4>
+                        <p class="text-xs text-gray-500 mt-2">Rapide et temporaire. Stocke les données des logiciels ouverts.</p>
+                    </div>
+                    <!-- HDD -->
+                    <div class="text-center p-4 rounded-xl hover:bg-purple-50 transition-colors">
+                        <div class="w-20 h-20 mx-auto bg-purple-100 rounded-full flex items-center justify-center text-purple-500 text-3xl mb-4"><i class="fas fa-hdd"></i></div>
+                        <h4 class="font-bold text-gray-800">Disque Dur</h4>
+                        <p class="text-xs text-gray-500 mt-2">Mémoire de masse. Stockage permanent des fichiers.</p>
+                    </div>
+                    <!-- Carte Mère -->
+                    <div class="text-center p-4 rounded-xl hover:bg-blue-50 transition-colors">
+                        <div class="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-500 text-3xl mb-4"><i class="fas fa-network-wired"></i></div>
+                        <h4 class="font-bold text-gray-800">Carte Mère</h4>
+                        <p class="text-xs text-gray-500 mt-2">La colonne vertébrale. Elle relie tous les composants.</p>
+                    </div>
+                </div>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-        </div>
 
-        <!-- Quiz Container -->
-        <div id="quiz-container" class="glass-panel p-6 sm:p-8 fade-in">
-            <!-- Content will be injected here -->
-        </div>
-        
-        <!-- Navigation -->
-        <div class="mt-6 flex justify-end">
-            <button id="next-btn" onclick="nextQuestion()" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 flex items-center">
-                Question Suivante <i class="fas fa-arrow-right ml-2"></i>
-            </button>
-        </div>
-    </div>
+            <!-- Infographic 3: Unités et Langage -->
+            <div class="grid md:grid-cols-2 gap-8 mb-10">
+                <div class="info-card p-8 reveal delay-100 bg-slate-800 text-white border-none">
+                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-binary text-green-400 mr-2"></i>Le Langage Binaire</h3>
+                    <p class="text-slate-300 text-sm mb-4">L'ordinateur ne comprend que deux états liés au courant électrique :</p>
+                    <div class="flex justify-around items-center bg-slate-700 p-4 rounded-xl">
+                        <div class="text-center"><span class="text-3xl font-black text-green-400 block">1</span><span class="text-xs">VRAI (Courant)</span></div>
+                        <div class="text-center"><span class="text-3xl font-black text-red-400 block">0</span><span class="text-xs">FAUX (Pas de courant)</span></div>
+                    </div>
+                </div>
+                
+                <div class="info-card p-8 reveal delay-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-weight-hanging text-blue-500 mr-2"></i>Unités de Mesure</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center justify-between bg-gray-50 p-3 rounded-lg"><span class="font-semibold text-gray-700">1 Octet (o)</span> <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">8 bits</span></li>
+                        <li class="flex items-center justify-between bg-gray-50 p-3 rounded-lg"><span class="font-semibold text-gray-700">1 Kilo-octet (Ko)</span> <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">1024 octets</span></li>
+                        <li class="flex items-center justify-between bg-gray-50 p-3 rounded-lg"><span class="font-semibold text-gray-700">1 Giga-octet (Go)</span> <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">1024 Mo</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12 reveal">
+                <button onclick="switchTab('module2')" class="bg-gray-800 hover:bg-black text-white font-bold py-4 px-10 rounded-full shadow-xl transition-all transform hover:-translate-y-1">
+                    Passer au Module 2 <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 2 : WINDOWS 10 ================= -->
+        <section id="module2" class="tab-content hidden">
+            <!-- Hero Section -->
+            <div class="text-center mb-16 reveal">
+                <span class="text-purple-600 font-bold tracking-wider uppercase text-sm bg-purple-100 px-4 py-1 rounded-full">Pratique</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mt-4 mb-4 text-gray-800">Maîtriser <span class="bg-gradient-to-r from-purple-600 to-pink-500 text-gradient">Windows 10</span></h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Naviguer, organiser et gérer vos données comme un professionnel.</p>
+            </div>
+
+            <!-- Infographic 1: Barre des tâches -->
+            <div class="info-card p-8 mb-10 reveal">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">La Barre des Tâches</h3>
+                <div class="bg-gray-800 p-4 rounded-xl flex items-center justify-between text-white overflow-hidden shadow-inner relative">
+                    <div class="flex items-center gap-4 z-10">
+                        <div class="flex flex-col items-center group"><i class="fab fa-windows text-xl hover:text-blue-400 cursor-pointer"></i><span class="text-[10px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6 bg-black px-2 py-1 rounded">1. Démarrer</span></div>
+                        <div class="flex flex-col items-center group"><div class="bg-white/20 px-3 py-1 rounded text-sm cursor-text"><i class="fas fa-search mr-2"></i>Cortana...</div><span class="text-[10px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6 bg-black px-2 py-1 rounded">2. Recherche</span></div>
+                    </div>
+                    <div class="flex items-center gap-3 z-10">
+                        <div class="relative group cursor-pointer"><i class="fas fa-folder text-yellow-400 text-xl"></i><div class="absolute -bottom-1 left-1/2 w-4 h-1 bg-white/80 rounded transform -translate-x-1/2"></div><span class="text-[10px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 -left-4 bg-black px-2 py-1 rounded whitespace-nowrap">3. App Ouverte</span></div>
+                        <div class="relative group cursor-pointer"><i class="fab fa-chrome text-green-400 text-xl"></i></div>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm z-10">
+                        <i class="fas fa-wifi"></i> <i class="fas fa-volume-up"></i> <span>14:30</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100"><strong class="block text-purple-700">1. Menu Démarrer</strong><span class="text-xs text-gray-600">Lance les apps et gère l'alimentation.</span></div>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100"><strong class="block text-purple-700">2. Cortana</strong><span class="text-xs text-gray-600">Recherche PC & Web.</span></div>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100"><strong class="block text-purple-700">3. Zone Apps</strong><span class="text-xs text-gray-600">Raccourcis. (Trait blanc = ouvert).</span></div>
+                    <div class="bg-purple-50 p-3 rounded-lg border border-purple-100"><strong class="block text-purple-700">4. Notifications</strong><span class="text-xs text-gray-600">Heure, réseau, batterie, antivirus.</span></div>
+                </div>
+            </div>
+
+            <!-- Infographic 2: Arborescence -->
+            <div class="info-card p-8 mb-10 reveal">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-2xl"><i class="fas fa-sitemap"></i></div>
+                    <h3 class="text-2xl font-bold text-gray-800">L'Arborescence (Rangement)</h3>
+                </div>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 bg-gray-50 py-8 rounded-2xl">
+                    <div class="text-center"><i class="fas fa-hdd text-4xl text-gray-700 mb-2"></i><p class="font-bold">Disque Dur</p><p class="text-xs text-gray-500">(L'Armoire)</p></div>
+                    <i class="fas fa-chevron-right text-gray-300 hidden md:block text-2xl"></i><i class="fas fa-chevron-down text-gray-300 md:hidden text-2xl"></i>
+                    <div class="text-center"><i class="fas fa-folder text-4xl text-yellow-400 mb-2"></i><p class="font-bold">Dossier</p><p class="text-xs text-gray-500">(Le Tiroir)</p></div>
+                    <i class="fas fa-chevron-right text-gray-300 hidden md:block text-2xl"></i><i class="fas fa-chevron-down text-gray-300 md:hidden text-2xl"></i>
+                    <div class="text-center"><i class="fas fa-folder-open text-4xl text-yellow-300 mb-2"></i><p class="font-bold">Sous-dossier</p><p class="text-xs text-gray-500">(La Sous-chemise)</p></div>
+                    <i class="fas fa-chevron-right text-gray-300 hidden md:block text-2xl"></i><i class="fas fa-chevron-down text-gray-300 md:hidden text-2xl"></i>
+                    <div class="text-center"><i class="fas fa-file-word text-4xl text-blue-500 mb-2"></i><p class="font-bold">Fichier</p><p class="text-xs text-gray-500">(La Feuille, ex: .docx)</p></div>
+                </div>
+            </div>
+
+            <!-- Infographic 3: Copier Coller -->
+            <div class="info-card p-8 mb-10 reveal">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6"><i class="fas fa-clipboard-list text-orange-500 mr-2"></i>Le Copier-Coller (Presse-papier)</h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white border-2 border-blue-100 p-5 rounded-xl text-center hover:border-blue-400 transition-colors">
+                        <kbd class="bg-gray-100 px-3 py-1 rounded-lg text-blue-600 font-mono font-bold text-lg border border-gray-200">Ctrl + C</kbd>
+                        <h4 class="font-bold mt-4 mb-1">Copier</h4>
+                        <p class="text-xs text-gray-500">Duplique l'élément. L'original reste à sa place.</p>
+                    </div>
+                    <div class="bg-white border-2 border-red-100 p-5 rounded-xl text-center hover:border-red-400 transition-colors">
+                        <kbd class="bg-gray-100 px-3 py-1 rounded-lg text-red-600 font-mono font-bold text-lg border border-gray-200">Ctrl + X</kbd>
+                        <h4 class="font-bold mt-4 mb-1">Couper</h4>
+                        <p class="text-xs text-gray-500">Déplace l'élément. L'original disparaît.</p>
+                    </div>
+                    <div class="bg-white border-2 border-green-100 p-5 rounded-xl text-center hover:border-green-400 transition-colors">
+                        <kbd class="bg-gray-100 px-3 py-1 rounded-lg text-green-600 font-mono font-bold text-lg border border-gray-200">Ctrl + V</kbd>
+                        <h4 class="font-bold mt-4 mb-1">Coller</h4>
+                        <p class="text-xs text-gray-500">Place l'élément dans le dossier de destination.</p>
+                    </div>
+                    <div class="bg-white border-2 border-purple-100 p-5 rounded-xl text-center hover:border-purple-400 transition-colors">
+                        <kbd class="bg-gray-100 px-3 py-1 rounded-lg text-purple-600 font-mono font-bold text-lg border border-gray-200">Ctrl + Z</kbd>
+                        <h4 class="font-bold mt-4 mb-1">Annuler</h4>
+                        <p class="text-xs text-gray-500">Raccourci magique pour défaire la dernière action.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12 reveal">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-xl transition-all transform hover:-translate-y-1">
+                    Passer à l'Évaluation <i class="fas fa-play ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3 : QUIZ INTERACTIF ================= -->
+        <section id="quiz" class="tab-content hidden">
+            <!-- Score Header -->
+            <div class="flex justify-between items-center mb-8 reveal">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-gray-800">Évaluation Interactive</h2>
+                    <p class="text-gray-500">Testez vos connaissances sur les deux modules.</p>
+                </div>
+                <div class="bg-white px-6 py-3 rounded-2xl border border-gray-200 flex items-center shadow-sm">
+                    <i class="fas fa-trophy text-yellow-400 text-3xl mr-4 drop-shadow-md"></i>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Score</span>
+                        <span class="text-3xl font-black text-gray-800 leading-none"><span id="score">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="mb-8 reveal">
+                <div class="flex justify-between text-sm font-bold text-gray-500 mb-2 px-1">
+                    <span id="progress-text">Question 1 sur 15</span>
+                    <span id="progress-percentage" class="text-blue-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-blue-400 to-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Box -->
+            <div id="quiz-container" class="info-card p-6 sm:p-10 reveal">
+                <!-- JS Inject -->
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-gray-800 hover:bg-black text-white font-bold py-4 px-8 rounded-full shadow-lg transition duration-300 flex items-center">
+                    Question Suivante <i class="fas fa-arrow-right ml-3"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
 
     <script>
+        // --- 1. TABS LOGIC ---
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            // Show target section
+            const target = document.getElementById(tabId);
+            target.classList.remove('hidden');
+            target.classList.add('block');
+
+            // Update tab button styles
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm', 'active-tab');
+                btn.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            activeBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm', 'active-tab');
+
+            // Trigger animations
+            window.scrollTo(0, 0);
+            triggerReveals();
+        }
+
+        // --- 2. SCROLL ANIMATIONS (INTERSECTION OBSERVER) ---
+        function triggerReveals() {
+            const reveals = document.querySelectorAll('.reveal');
+            const windowHeight = window.innerHeight;
+            const elementVisible = 50;
+
+            reveals.forEach(reveal => {
+                const elementTop = reveal.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', triggerReveals);
+        // Initial trigger
+        setTimeout(triggerReveals, 100);
+
+        // --- 3. QUIZ LOGIC ---
         const questions = [
-            {
-                question: "De quoi est composé principalement un système informatique ?",
-                options: [
-                    "Uniquement d'un écran et d'un clavier.",
-                    "D'une partie matérielle (Hardware) et d'une partie logicielle (Software).",
-                    "D'un système d'exploitation et d'Internet."
-                ],
-                answer: 1,
-                feedback: "Le système informatique est divisé en deux parties : le Matériel (composants physiques visibles) et le Logiciel (programmes non visibles)."
-            },
-            {
-                question: "Quel composant est considéré comme le « cerveau » de l'ordinateur ?",
-                options: [
-                    "Le disque dur",
-                    "La carte mère",
-                    "Le processeur (CPU)"
-                ],
-                answer: 2,
-                feedback: "Le processeur (ou CPU) est le cœur de l'ordinateur, chargé de traiter les informations et d'exécuter les instructions."
-            },
-            {
-                question: "Quel est le rôle principal de la mémoire vive (RAM) ?",
-                options: [
-                    "Stocker les fichiers de manière permanente.",
-                    "Stocker provisoirement des informations utiles du système et des logiciels pendant leur fonctionnement.",
-                    "Refroidir le micro-processeur."
-                ],
-                answer: 1,
-                feedback: "La mémoire RAM est très rapide mais temporaire. Elle sert à stocker les données des applications ouvertes pour un accès immédiat par le processeur."
-            },
-            {
-                question: "Quel est le rôle de la carte mère dans l'unité centrale ?",
-                options: [
-                    "Centraliser toutes les données et relier tous les autres éléments pour qu'ils communiquent entre eux.",
-                    "Afficher les images sur l'écran.",
-                    "Transformer et fournir l'énergie électrique."
-                ],
-                answer: 0,
-                feedback: "La carte mère est la colonne vertébrale de l'ordinateur. Elle possède des connecteurs (slots) pour accueillir et relier tous les composants."
-            },
-            {
-                question: "Parmi ces appareils, lequel est un périphérique de sortie ?",
-                options: [
-                    "Le clavier",
-                    "Le scanner",
-                    "L'imprimante"
-                ],
-                answer: 2,
-                feedback: "Un périphérique de sortie transmet l'information vers l'extérieur sous une forme compréhensible (ex: écran, imprimante, haut-parleur)."
-            },
-            {
-                question: "Quel est le langage natif compris par l'ordinateur ?",
-                options: [
-                    "Le langage décimal",
-                    "Le langage binaire (base 2)",
-                    "Le langage hexadécimal"
-                ],
-                answer: 1,
-                feedback: "L'ordinateur ne comprend que le binaire, qui utilise deux états (0 et 1) pour coder les informations en fonction du passage du courant."
-            },
-            {
-                question: "En informatique, à combien équivaut 1 Giga-octet (Go) ?",
-                options: [
-                    "1000 Méga-octets (Mo).",
-                    "1024 Kilo-octets (Ko).",
-                    "1024 Méga-octets (Mo)."
-                ],
-                answer: 2,
-                feedback: "Selon la table de conversion standard de la taille mémoire, 1 Giga-octet (Go) correspond exactement à 1024 Méga-octets (Mo)."
-            },
-            {
-                question: "Qu'est-ce qu'un système d'exploitation (OS) comme Windows ?",
-                options: [
-                    "C'est un logiciel de traitement de texte.",
-                    "C'est un ensemble de programmes gérant le matériel, l'interface utilisateur et le lancement des applications.",
-                    "C'est un composant matériel installé dans l'unité centrale."
-                ],
-                answer: 1,
-                feedback: "Le système d'exploitation fait le pont entre le matériel (via les pilotes) et les logiciels utilisateurs. Il gère l'interface, les fenêtres, et les ressources de l'ordinateur."
-            },
-            {
-                question: "Qu'est-ce qu'une icône sur le bureau Windows ?",
-                options: [
-                    "Un virus informatique.",
-                    "Un petit pictogramme (image) représentant un raccourci vers un fichier, une application ou un dossier.",
-                    "Un dossier système caché."
-                ],
-                answer: 1,
-                feedback: "L'icône est un raccourci visuel vers une ressource stockée sur le disque dur. Elle rend l'interface graphique plus simple d'utilisation."
-            },
-            {
-                question: "Quelle est la fonction de la Corbeille sous Windows ?",
-                options: [
-                    "Accélérer les performances globales de l'ordinateur.",
-                    "Contenir tous les objets supprimés avec la possibilité de les restaurer en cas d'erreur.",
-                    "Supprimer définitivement et immédiatement les fichiers dès qu'ils y sont placés."
-                ],
-                answer: 1,
-                feedback: "La corbeille agit comme un filet de sécurité. Elle conserve temporairement les fichiers supprimés pour vous permettre de les restaurer (annuler la suppression) si besoin."
-            },
-            {
-                question: "Quel programme Windows permet de naviguer dans l'arborescence des dossiers et de manipuler les fichiers ?",
-                options: [
-                    "Le Panneau de configuration",
-                    "L'Explorateur de fichiers",
-                    "Le Menu Démarrer"
-                ],
-                answer: 1,
-                feedback: "L'explorateur de fichiers est le programme qui permet de parcourir l'arborescence de votre ordinateur, rechercher des fichiers et faire des copier/coller."
-            },
-            {
-                question: "Quel raccourci clavier permet de coller un élément copié dans le Presse-papier ?",
-                options: [
-                    "Ctrl + C",
-                    "Ctrl + V",
-                    "Ctrl + Z"
-                ],
-                answer: 1,
-                feedback: "Le raccourci Ctrl + V est utilisé pour coller, Ctrl + C pour copier (Copy), et Ctrl + Z pour annuler la dernière action (Undo)."
-            },
-            {
-                question: "Quelle est la différence entre le « Copier-coller » et le « Couper-coller » ?",
-                options: [
-                    "Il n'y a aucune différence.",
-                    "Le couper-coller déplace le fichier (l'original disparaît), tandis que le copier-coller le duplique.",
-                    "Le couper-coller supprime le fichier définitivement."
-                ],
-                answer: 1,
-                feedback: "Le couper-coller (Ctrl + X puis Ctrl + V) déplace les données, ce qui signifie que le fichier d'origine disparaît de son emplacement initial."
-            },
-            {
-                question: "Dans Windows 10, à quoi sert Cortana ?",
-                options: [
-                    "À faire des recherches de fichiers et d'applications sur le PC et sur le web.",
-                    "À formater le disque dur.",
-                    "À protéger l'ordinateur contre les virus."
-                ],
-                answer: 0,
-                feedback: "La boîte de recherche Cortana (intégrée dans la barre des tâches) permet de rechercher facilement des éléments sur votre PC ou sur Internet."
-            },
-            {
-                question: "Comment est structuré le rangement des fichiers sur un disque dur ?",
-                options: [
-                    "En boucle infinie.",
-                    "En réseau maillé.",
-                    "En arborescence (dossiers et sous-dossiers)."
-                ],
-                answer: 2,
-                feedback: "Un disque est subdivisé en dossiers et sous-dossiers, formant une structure hiérarchisée appelée arborescence, semblable à une armoire avec des tiroirs et des chemises."
-            }
+            { question: "De quoi est composé principalement un système informatique ?", options: ["Uniquement d'un écran et d'un clavier.", "D'une partie matérielle (Hardware) et logicielle (Software).", "D'un système d'exploitation et d'Internet."], answer: 1, feedback: "Le système est divisé en Matériel (composants physiques) et Logiciel (programmes)." },
+            { question: "Quel composant est le « cerveau » de l'ordinateur ?", options: ["Le disque dur", "La carte mère", "Le processeur (CPU)"], answer: 2, feedback: "Le processeur (CPU) traite les informations et exécute les instructions." },
+            { question: "Quel est le rôle de la mémoire vive (RAM) ?", options: ["Stocker les fichiers de manière permanente.", "Stocker provisoirement les données des logiciels ouverts.", "Refroidir le système."], answer: 1, feedback: "La RAM est très rapide mais temporaire. Elle stocke les données pour un accès immédiat." },
+            { question: "Quel est le rôle de la carte mère ?", options: ["Relier tous les composants entre eux.", "Afficher les images.", "Alimenter en électricité."], answer: 0, feedback: "La carte mère est la colonne vertébrale qui connecte tous les éléments." },
+            { question: "Lequel est un périphérique de sortie ?", options: ["Le clavier", "Le scanner", "L'imprimante"], answer: 2, feedback: "L'imprimante fait sortir l'information de l'ordinateur vers l'extérieur." },
+            { question: "Quel est le langage natif de l'ordinateur ?", options: ["Le langage décimal", "Le langage binaire", "Le langage hexadécimal"], answer: 1, feedback: "L'ordinateur ne comprend que le binaire (0 et 1)." },
+            { question: "À combien équivaut 1 Giga-octet (Go) ?", options: ["1000 Mo", "1024 Ko", "1024 Mo"], answer: 2, feedback: "1 Go correspond exactement à 1024 Méga-octets (Mo)." },
+            { question: "Qu'est-ce qu'un système d'exploitation (ex: Windows 10) ?", options: ["Un logiciel de traitement de texte.", "L'ensemble des programmes gérant le matériel et l'interface.", "Un composant matériel."], answer: 1, feedback: "L'OS gère l'interface, les fenêtres, et fait le lien avec le matériel." },
+            { question: "Qu'est-ce qu'une icône sur le bureau ?", options: ["Un virus.", "Un raccourci visuel vers un fichier/application.", "Un dossier caché."], answer: 1, feedback: "L'icône est un pictogramme servant de raccourci rapide." },
+            { question: "Quelle est la fonction de la Corbeille ?", options: ["Accélérer le PC.", "Contenir les objets supprimés pour pouvoir les restaurer.", "Supprimer définitivement."], answer: 1, feedback: "Elle conserve temporairement les fichiers supprimés en cas d'erreur." },
+            { question: "Quel programme permet de naviguer dans l'arborescence ?", options: ["Panneau de configuration", "L'Explorateur de fichiers", "Cortana"], answer: 1, feedback: "L'explorateur permet de parcourir vos dossiers et fichiers." },
+            { question: "Quel raccourci clavier permet de coller ?", options: ["Ctrl + C", "Ctrl + V", "Ctrl + Z"], answer: 1, feedback: "Ctrl + V pour coller, Ctrl + C pour copier." },
+            { question: "Différence entre « Copier » et « Couper » ?", options: ["Aucune.", "Le couper déplace le fichier (l'original disparaît).", "Le couper supprime définitivement."], answer: 1, feedback: "Couper (Ctrl + X) déplace les données : l'original disparaît de sa place." },
+            { question: "À quoi sert Cortana ?", options: ["Rechercher sur le PC et le web.", "Formater le disque.", "Protéger des virus."], answer: 0, feedback: "Cortana est l'assistant de recherche intégré à la barre des tâches." },
+            { question: "Comment est structuré le rangement sur un disque dur ?", options: ["En boucle.", "En arborescence (dossiers et sous-dossiers).", "En réseau."], answer: 1, feedback: "La structure est hiérarchisée en arborescence, comme une armoire à tiroirs." }
         ];
 
-        let currentQuestion = 0;
+        let currentQ = 0;
         let score = 0;
 
         function renderQuestion() {
-            const q = questions[currentQuestion];
-            const progress = (currentQuestion / questions.length) * 100;
+            const q = questions[currentQ];
+            const progress = (currentQ / questions.length) * 100;
             
             document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('progress-text').innerText = `Question ${currentQuestion + 1} sur ${questions.length}`;
+            document.getElementById('progress-text').innerText = `Question ${currentQ + 1} sur ${questions.length}`;
             document.getElementById('progress-percentage').innerText = Math.round(progress) + '%';
 
             let html = `
-                <div class="fade-in">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-6 leading-relaxed">
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md mr-2 text-sm">Q${currentQuestion + 1}</span>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-8 leading-relaxed">
+                        <span class="bg-blue-600 text-white px-4 py-2 rounded-xl mr-3 text-lg shadow-md">Q${currentQ + 1}</span>
                         ${q.question}
                     </h2>
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         ${q.options.map((opt, index) => `
-                            <button onclick="checkAnswer(${index}, this)" class="option-btn w-full text-left p-4 rounded-lg font-medium text-gray-700 bg-gray-50 flex items-center justify-between">
+                            <button onclick="checkAnswer(${index}, this)" class="quiz-btn w-full text-left p-5 rounded-2xl font-semibold text-gray-700 bg-gray-50 flex items-center justify-between text-lg">
                                 <span>${opt}</span>
-                                <i class="icon-status fas fa-circle text-gray-300"></i>
+                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 icon-status flex items-center justify-center"></div>
                             </button>
                         `).join('')}
                     </div>
-                    <div id="feedback-box" class="hidden mt-6 p-4 rounded-lg border-l-4 shadow-sm fade-in">
+                    <div id="feedback-box" class="hidden mt-8 p-6 rounded-2xl border-l-4 shadow-sm transform transition-all">
                         <div class="flex items-start">
-                            <i id="feedback-icon" class="mt-1 mr-3 text-lg"></i>
+                            <i id="feedback-icon" class="mt-1 mr-4 text-2xl"></i>
                             <div>
                                 <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
-                                <p id="feedback-text" class="text-sm opacity-90"></p>
+                                <p id="feedback-text" class="text-gray-700"></p>
                             </div>
                         </div>
                     </div>
@@ -287,12 +422,9 @@
         }
 
         function checkAnswer(selectedIndex, btnElement) {
-            const q = questions[currentQuestion];
-            const buttons = document.querySelectorAll('.option-btn');
+            const q = questions[currentQ];
+            const buttons = document.querySelectorAll('.quiz-btn');
             const feedbackBox = document.getElementById('feedback-box');
-            const feedbackTitle = document.getElementById('feedback-title');
-            const feedbackText = document.getElementById('feedback-text');
-            const feedbackIcon = document.getElementById('feedback-icon');
             
             buttons.forEach(btn => btn.disabled = true);
             feedbackBox.classList.remove('hidden');
@@ -302,82 +434,75 @@
                 document.getElementById('score').innerText = score;
                 
                 btnElement.classList.add('correct-ans');
-                btnElement.querySelector('.icon-status').classList.replace('fa-circle', 'fa-check-circle');
-                btnElement.querySelector('.icon-status').classList.replace('text-gray-300', 'text-green-600');
+                btnElement.querySelector('.icon-status').innerHTML = '<i class="fas fa-check text-xs"></i>';
+                btnElement.querySelector('.icon-status').classList.add('border-green-600', 'bg-green-600', 'text-white');
                 
-                feedbackBox.className = 'mt-6 p-4 rounded-lg border-l-4 shadow-sm fade-in bg-green-50 border-green-500 text-green-800';
-                feedbackIcon.className = 'fas fa-check-circle mt-1 mr-3 text-xl text-green-600';
-                feedbackTitle.innerText = "Bonne réponse !";
+                feedbackBox.className = 'mt-8 p-6 rounded-2xl border-l-4 shadow-md bg-green-50 border-green-500';
+                document.getElementById('feedback-icon').className = 'fas fa-check-circle mt-1 mr-4 text-2xl text-green-600';
+                document.getElementById('feedback-title').innerText = "Excellente réponse !";
+                document.getElementById('feedback-title').className = "font-bold text-lg mb-1 text-green-800";
             } else {
                 btnElement.classList.add('wrong-ans');
-                btnElement.querySelector('.icon-status').classList.replace('fa-circle', 'fa-times-circle');
-                btnElement.querySelector('.icon-status').classList.replace('text-gray-300', 'text-red-600');
+                btnElement.querySelector('.icon-status').innerHTML = '<i class="fas fa-times text-xs"></i>';
+                btnElement.querySelector('.icon-status').classList.add('border-red-600', 'bg-red-600', 'text-white');
                 
                 const correctBtn = buttons[q.answer];
                 correctBtn.classList.add('correct-ans');
-                correctBtn.querySelector('.icon-status').classList.replace('fa-circle', 'fa-check-circle');
-                correctBtn.querySelector('.icon-status').classList.replace('text-gray-300', 'text-green-600');
+                correctBtn.querySelector('.icon-status').innerHTML = '<i class="fas fa-check text-xs"></i>';
+                correctBtn.querySelector('.icon-status').classList.add('border-green-600', 'bg-green-600', 'text-white');
 
-                feedbackBox.className = 'mt-6 p-4 rounded-lg border-l-4 shadow-sm fade-in bg-red-50 border-red-500 text-red-800';
-                feedbackIcon.className = 'fas fa-times-circle mt-1 mr-3 text-xl text-red-600';
-                feedbackTitle.innerText = "Réponse incorrecte";
+                feedbackBox.className = 'mt-8 p-6 rounded-2xl border-l-4 shadow-md bg-red-50 border-red-500';
+                document.getElementById('feedback-icon').className = 'fas fa-times-circle mt-1 mr-4 text-2xl text-red-600';
+                document.getElementById('feedback-title').innerText = "Oups, ce n'est pas ça.";
+                document.getElementById('feedback-title').className = "font-bold text-lg mb-1 text-red-800";
             }
             
-            feedbackText.innerText = q.feedback;
+            document.getElementById('feedback-text').innerText = q.feedback;
             document.getElementById('next-btn').classList.remove('hidden');
         }
 
         function nextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
+            currentQ++;
+            if (currentQ < questions.length) {
                 renderQuestion();
             } else {
                 document.getElementById('progress-bar').style.width = '100%';
                 document.getElementById('progress-percentage').innerText = '100%';
                 document.getElementById('progress-text').innerText = 'Terminé !';
 
-                let message = "";
-                let icon = "";
-                let color = "";
-                const maxScore = questions.length * 10;
+                let msg = "", icon = "", color = "";
+                const max = questions.length * 10;
                 
-                if (score === maxScore) {
-                    message = "Exceptionnel ! Vous maîtrisez parfaitement l'informatique de base et Windows 10.";
-                    icon = "fa-trophy";
-                    color = "text-yellow-500";
-                } else if (score >= (maxScore / 2)) {
-                    message = "Bon travail ! Vous avez acquis de bonnes bases, une petite révision fera la différence.";
-                    icon = "fa-thumbs-up";
-                    color = "text-blue-500";
-                } else {
-                    message = "Ne vous découragez pas. Relisez les supports PDF et retentez votre chance !";
-                    icon = "fa-book-reader";
-                    color = "text-gray-500";
-                }
+                if (score === max) { msg = "Parfait ! Tu es un véritable expert en informatique."; icon = "fa-trophy"; color = "text-yellow-500"; } 
+                else if (score >= (max / 2)) { msg = "Bien joué ! Tu as de très bonnes bases."; icon = "fa-medal"; color = "text-blue-500"; } 
+                else { msg = "Ne te décourage pas, relis les infographies et réessaie !"; icon = "fa-book-reader"; color = "text-gray-500"; }
 
                 document.getElementById('quiz-container').innerHTML = `
-                    <div class="text-center py-8 fade-in">
-                        <i class="fas ${icon} ${color} text-6xl mb-4"></i>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Test Terminé !</h2>
-                        <p class="text-gray-500 mb-8">Voici le résultat de votre évaluation</p>
+                    <div class="text-center py-12">
+                        <div class="inline-block p-6 rounded-full bg-white shadow-lg mb-6 border-4 border-gray-50">
+                            <i class="fas ${icon} ${color} text-7xl"></i>
+                        </div>
+                        <h2 class="text-4xl font-extrabold text-gray-800 mb-2">Bilan de Compétences</h2>
+                        <p class="text-gray-500 mb-8">Voici le résultat de ton évaluation</p>
                         
-                        <div class="inline-block bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-inner mb-6 w-full max-w-sm">
-                            <p class="text-sm text-gray-500 uppercase tracking-wider font-semibold mb-1">Score Final</p>
-                            <p class="text-5xl font-extrabold text-blue-600">${score}<span class="text-2xl text-gray-400">/${maxScore}</span></p>
+                        <div class="inline-block bg-gradient-to-b from-white to-gray-50 rounded-3xl p-8 border border-gray-200 shadow-xl mb-8 min-w-[300px]">
+                            <p class="text-sm text-gray-400 uppercase tracking-widest font-bold mb-3">Score Final</p>
+                            <p class="text-7xl font-black text-blue-600 drop-shadow-sm">${score}<span class="text-3xl text-gray-300">/${max}</span></p>
                         </div>
                         
-                        <p class="text-lg text-gray-700 mb-8 px-4">${message}</p>
+                        <p class="text-xl text-gray-700 mb-10 px-4">${msg}</p>
                         
-                        <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-300 flex items-center mx-auto">
-                            <i class="fas fa-redo-alt mr-2"></i> Recommencer le test
-                        </button>
+                        <div class="flex justify-center gap-4">
+                            <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transition duration-300">
+                                <i class="fas fa-redo-alt mr-2"></i> Recommencer
+                            </button>
+                        </div>
                     </div>
                 `;
                 document.getElementById('next-btn').classList.add('hidden');
             }
         }
 
-        // Démarrer l'application
         renderQuestion();
     </script>
 </body>
