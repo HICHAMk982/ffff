@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation Interactive | Informatique & Windows 10</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); 
+            min-height: 100vh; 
+        }
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.95); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
+            border-radius: 1rem; 
+        }
+        .option-btn { 
+            transition: all 0.2s ease; 
+            border: 2px solid #e5e7eb; 
+        }
+        .option-btn:hover:not(:disabled) { 
+            border-color: #3b82f6; 
+            background-color: #eff6ff; 
+            transform: translateX(5px); 
+        }
+        .option-btn:disabled { 
+            cursor: not-allowed; 
+            opacity: 0.8; 
+        }
+        .correct-ans { 
+            background-color: #ecfdf5 !important; 
+            border-color: #10b981 !important; 
+            color: #065f46 !important; 
+        }
+        .wrong-ans { 
+            background-color: #fef2f2 !important; 
+            border-color: #ef4444 !important; 
+            color: #991b1b !important; 
+        }
+        .fade-in { 
+            animation: fadeIn 0.4s ease-in; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+    </style>
+</head>
+<body class="py-10 px-4">
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800"><i class="fas fa-laptop-code text-blue-600 mr-2"></i>Révision Pro</h1>
+                <p class="text-sm text-gray-500 mt-1">Initiation à l'Informatique & Windows 10</p>
+            </div>
+            <div class="bg-blue-50 px-5 py-3 rounded-lg border border-blue-100 flex items-center shadow-sm">
+                <i class="fas fa-star text-yellow-400 text-xl mr-3"></i>
+                <div class="flex flex-col">
+                    <span class="text-xs text-blue-500 font-semibold uppercase tracking-wider">Score</span>
+                    <span class="text-xl font-bold text-blue-800 leading-none"><span id="score">0</span> pts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-6">
+            <div class="flex justify-between text-xs font-semibold text-gray-500 mb-2">
+                <span id="progress-text">Question 1 sur 15</span>
+                <span id="progress-percentage">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="glass-panel p-6 sm:p-8 fade-in">
+            <!-- Content will be injected here -->
+        </div>
+        
+        <!-- Navigation -->
+        <div class="mt-6 flex justify-end">
+            <button id="next-btn" onclick="nextQuestion()" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 flex items-center">
+                Question Suivante <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "De quoi est composé principalement un système informatique ?",
+                options: [
+                    "Uniquement d'un écran et d'un clavier.",
+                    "D'une partie matérielle (Hardware) et d'une partie logicielle (Software).",
+                    "D'un système d'exploitation et d'Internet."
+                ],
+                answer: 1,
+                feedback: "Le système informatique est divisé en deux parties : le Matériel (composants physiques visibles) et le Logiciel (programmes non visibles)."
+            },
+            {
+                question: "Quel composant est considéré comme le « cerveau » de l'ordinateur ?",
+                options: [
+                    "Le disque dur",
+                    "La carte mère",
+                    "Le processeur (CPU)"
+                ],
+                answer: 2,
+                feedback: "Le processeur (ou CPU) est le cœur de l'ordinateur, chargé de traiter les informations et d'exécuter les instructions."
+            },
+            {
+                question: "Quel est le rôle principal de la mémoire vive (RAM) ?",
+                options: [
+                    "Stocker les fichiers de manière permanente.",
+                    "Stocker provisoirement des informations utiles du système et des logiciels pendant leur fonctionnement.",
+                    "Refroidir le micro-processeur."
+                ],
+                answer: 1,
+                feedback: "La mémoire RAM est très rapide mais temporaire. Elle sert à stocker les données des applications ouvertes pour un accès immédiat par le processeur."
+            },
+            {
+                question: "Quel est le rôle de la carte mère dans l'unité centrale ?",
+                options: [
+                    "Centraliser toutes les données et relier tous les autres éléments pour qu'ils communiquent entre eux.",
+                    "Afficher les images sur l'écran.",
+                    "Transformer et fournir l'énergie électrique."
+                ],
+                answer: 0,
+                feedback: "La carte mère est la colonne vertébrale de l'ordinateur. Elle possède des connecteurs (slots) pour accueillir et relier tous les composants."
+            },
+            {
+                question: "Parmi ces appareils, lequel est un périphérique de sortie ?",
+                options: [
+                    "Le clavier",
+                    "Le scanner",
+                    "L'imprimante"
+                ],
+                answer: 2,
+                feedback: "Un périphérique de sortie transmet l'information vers l'extérieur sous une forme compréhensible (ex: écran, imprimante, haut-parleur)."
+            },
+            {
+                question: "Quel est le langage natif compris par l'ordinateur ?",
+                options: [
+                    "Le langage décimal",
+                    "Le langage binaire (base 2)",
+                    "Le langage hexadécimal"
+                ],
+                answer: 1,
+                feedback: "L'ordinateur ne comprend que le binaire, qui utilise deux états (0 et 1) pour coder les informations en fonction du passage du courant."
+            },
+            {
+                question: "En informatique, à combien équivaut 1 Giga-octet (Go) ?",
+                options: [
+                    "1000 Méga-octets (Mo).",
+                    "1024 Kilo-octets (Ko).",
+                    "1024 Méga-octets (Mo)."
+                ],
+                answer: 2,
+                feedback: "Selon la table de conversion standard de la taille mémoire, 1 Giga-octet (Go) correspond exactement à 1024 Méga-octets (Mo)."
+            },
+            {
+                question: "Qu'est-ce qu'un système d'exploitation (OS) comme Windows ?",
+                options: [
+                    "C'est un logiciel de traitement de texte.",
+                    "C'est un ensemble de programmes gérant le matériel, l'interface utilisateur et le lancement des applications.",
+                    "C'est un composant matériel installé dans l'unité centrale."
+                ],
+                answer: 1,
+                feedback: "Le système d'exploitation fait le pont entre le matériel (via les pilotes) et les logiciels utilisateurs. Il gère l'interface, les fenêtres, et les ressources de l'ordinateur."
+            },
+            {
+                question: "Qu'est-ce qu'une icône sur le bureau Windows ?",
+                options: [
+                    "Un virus informatique.",
+                    "Un petit pictogramme (image) représentant un raccourci vers un fichier, une application ou un dossier.",
+                    "Un dossier système caché."
+                ],
+                answer: 1,
+                feedback: "L'icône est un raccourci visuel vers une ressource stockée sur le disque dur. Elle rend l'interface graphique plus simple d'utilisation."
+            },
+            {
+                question: "Quelle est la fonction de la Corbeille sous Windows ?",
+                options: [
+                    "Accélérer les performances globales de l'ordinateur.",
+                    "Contenir tous les objets supprimés avec la possibilité de les restaurer en cas d'erreur.",
+                    "Supprimer définitivement et immédiatement les fichiers dès qu'ils y sont placés."
+                ],
+                answer: 1,
+                feedback: "La corbeille agit comme un filet de sécurité. Elle conserve temporairement les fichiers supprimés pour vous permettre de les restaurer (annuler la suppression) si besoin."
+            },
+            {
+                question: "Quel programme Windows permet de naviguer dans l'arborescence des dossiers et de manipuler les fichiers ?",
+                options: [
+                    "Le Panneau de configuration",
+                    "L'Explorateur de fichiers",
+                    "Le Menu Démarrer"
+                ],
+                answer: 1,
+                feedback: "L'explorateur de fichiers est le programme qui permet de parcourir l'arborescence de votre ordinateur, rechercher des fichiers et faire des copier/coller."
+            },
+            {
+                question: "Quel raccourci clavier permet de coller un élément copié dans le Presse-papier ?",
+                options: [
+                    "Ctrl + C",
+                    "Ctrl + V",
+                    "Ctrl + Z"
+                ],
+                answer: 1,
+                feedback: "Le raccourci Ctrl + V est utilisé pour coller, Ctrl + C pour copier (Copy), et Ctrl + Z pour annuler la dernière action (Undo)."
+            },
+            {
+                question: "Quelle est la différence entre le « Copier-coller » et le « Couper-coller » ?",
+                options: [
+                    "Il n'y a aucune différence.",
+                    "Le couper-coller déplace le fichier (l'original disparaît), tandis que le copier-coller le duplique.",
+                    "Le couper-coller supprime le fichier définitivement."
+                ],
+                answer: 1,
+                feedback: "Le couper-coller (Ctrl + X puis Ctrl + V) déplace les données, ce qui signifie que le fichier d'origine disparaît de son emplacement initial."
+            },
+            {
+                question: "Dans Windows 10, à quoi sert Cortana ?",
+                options: [
+                    "À faire des recherches de fichiers et d'applications sur le PC et sur le web.",
+                    "À formater le disque dur.",
+                    "À protéger l'ordinateur contre les virus."
+                ],
+                answer: 0,
+                feedback: "La boîte de recherche Cortana (intégrée dans la barre des tâches) permet de rechercher facilement des éléments sur votre PC ou sur Internet."
+            },
+            {
+                question: "Comment est structuré le rangement des fichiers sur un disque dur ?",
+                options: [
+                    "En boucle infinie.",
+                    "En réseau maillé.",
+                    "En arborescence (dossiers et sous-dossiers)."
+                ],
+                answer: 2,
+                feedback: "Un disque est subdivisé en dossiers et sous-dossiers, formant une structure hiérarchisée appelée arborescence, semblable à une armoire avec des tiroirs et des chemises."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            const progress = (currentQuestion / questions.length) * 100;
+            
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').innerText = `Question ${currentQuestion + 1} sur ${questions.length}`;
+            document.getElementById('progress-percentage').innerText = Math.round(progress) + '%';
+
+            let html = `
+                <div class="fade-in">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 leading-relaxed">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md mr-2 text-sm">Q${currentQuestion + 1}</span>
+                        ${q.question}
+                    </h2>
+                    <div class="space-y-3">
+                        ${q.options.map((opt, index) => `
+                            <button onclick="checkAnswer(${index}, this)" class="option-btn w-full text-left p-4 rounded-lg font-medium text-gray-700 bg-gray-50 flex items-center justify-between">
+                                <span>${opt}</span>
+                                <i class="icon-status fas fa-circle text-gray-300"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="feedback-box" class="hidden mt-6 p-4 rounded-lg border-l-4 shadow-sm fade-in">
+                        <div class="flex items-start">
+                            <i id="feedback-icon" class="mt-1 mr-3 text-lg"></i>
+                            <div>
+                                <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
+                                <p id="feedback-text" class="text-sm opacity-90"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('quiz-container').innerHTML = html;
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            feedbackBox.classList.remove('hidden');
+            
+            if (selectedIndex === q.answer) {
+                score += 10;
+                document.getElementById('score').innerText = score;
+                
+                btnElement.classList.add('correct-ans');
+                btnElement.querySelector('.icon-status').classList.replace('fa-circle', 'fa-check-circle');
+                btnElement.querySelector('.icon-status').classList.replace('text-gray-300', 'text-green-600');
+                
+                feedbackBox.className = 'mt-6 p-4 rounded-lg border-l-4 shadow-sm fade-in bg-green-50 border-green-500 text-green-800';
+                feedbackIcon.className = 'fas fa-check-circle mt-1 mr-3 text-xl text-green-600';
+                feedbackTitle.innerText = "Bonne réponse !";
+            } else {
+                btnElement.classList.add('wrong-ans');
+                btnElement.querySelector('.icon-status').classList.replace('fa-circle', 'fa-times-circle');
+                btnElement.querySelector('.icon-status').classList.replace('text-gray-300', 'text-red-600');
+                
+                const correctBtn = buttons[q.answer];
+                correctBtn.classList.add('correct-ans');
+                correctBtn.querySelector('.icon-status').classList.replace('fa-circle', 'fa-check-circle');
+                correctBtn.querySelector('.icon-status').classList.replace('text-gray-300', 'text-green-600');
+
+                feedbackBox.className = 'mt-6 p-4 rounded-lg border-l-4 shadow-sm fade-in bg-red-50 border-red-500 text-red-800';
+                feedbackIcon.className = 'fas fa-times-circle mt-1 mr-3 text-xl text-red-600';
+                feedbackTitle.innerText = "Réponse incorrecte";
+            }
+            
+            feedbackText.innerText = q.feedback;
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                renderQuestion();
+            } else {
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('progress-percentage').innerText = '100%';
+                document.getElementById('progress-text').innerText = 'Terminé !';
+
+                let message = "";
+                let icon = "";
+                let color = "";
+                const maxScore = questions.length * 10;
+                
+                if (score === maxScore) {
+                    message = "Exceptionnel ! Vous maîtrisez parfaitement l'informatique de base et Windows 10.";
+                    icon = "fa-trophy";
+                    color = "text-yellow-500";
+                } else if (score >= (maxScore / 2)) {
+                    message = "Bon travail ! Vous avez acquis de bonnes bases, une petite révision fera la différence.";
+                    icon = "fa-thumbs-up";
+                    color = "text-blue-500";
+                } else {
+                    message = "Ne vous découragez pas. Relisez les supports PDF et retentez votre chance !";
+                    icon = "fa-book-reader";
+                    color = "text-gray-500";
+                }
+
+                document.getElementById('quiz-container').innerHTML = `
+                    <div class="text-center py-8 fade-in">
+                        <i class="fas ${icon} ${color} text-6xl mb-4"></i>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Test Terminé !</h2>
+                        <p class="text-gray-500 mb-8">Voici le résultat de votre évaluation</p>
+                        
+                        <div class="inline-block bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-inner mb-6 w-full max-w-sm">
+                            <p class="text-sm text-gray-500 uppercase tracking-wider font-semibold mb-1">Score Final</p>
+                            <p class="text-5xl font-extrabold text-blue-600">${score}<span class="text-2xl text-gray-400">/${maxScore}</span></p>
+                        </div>
+                        
+                        <p class="text-lg text-gray-700 mb-8 px-4">${message}</p>
+                        
+                        <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-300 flex items-center mx-auto">
+                            <i class="fas fa-redo-alt mr-2"></i> Recommencer le test
+                        </button>
+                    </div>
+                `;
+                document.getElementById('next-btn').classList.add('hidden');
+            }
+        }
+
+        // Démarrer l'application
+        renderQuestion();
+    </script>
+</body>
+</html>
